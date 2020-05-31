@@ -9,11 +9,9 @@
 # Some colors for prompts
 # Sequence of text colors : black (0), red, green, yellow, blue, magenta, cyan,white
 # https://ss64.com/bash/syntax-prompt.html
-_black=$(tput setaf 0);	_red=$(tput setaf 1);
-_green=$(tput setaf 2);	_yellow=$(tput setaf 3);
-_blue=$(tput setaf 4);	_magenta=$(tput setaf 5);
-_cyan=$(tput setaf 6);	_white=$(tput setaf 7);
-_reset=$(tput sgr0);
+_black=$(tput setaf 0);  _red=$(tput setaf 1);  _green=$(tput setaf 2);
+_yellow=$(tput setaf 3);  _blue=$(tput setaf 4);  _magenta=$(tput setaf 5);
+_cyan=$(tput setaf 6);  _white=$(tput setaf 7);  _reset=$(tput sgr0);
 
 # Args and Globals handling
 if ! [ -x "$(command -v hub)" ]; then
@@ -143,7 +141,9 @@ confirmTitle(){
 
 getCompareUrl(){
     # TODO: Case of --track different head
-    COMPARE_URL=$(hub compare -u -b "$PR_BASE");
+    COMPARE_URL=$(hub compare -u -b "$PR_BASE")
+    # Use expanded controls to allow changing title/creating draft PR
+    COMPARE_URL="$COMPARE_URL?expand=1"
 }
 
 # Main Body
