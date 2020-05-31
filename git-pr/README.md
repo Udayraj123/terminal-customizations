@@ -14,9 +14,9 @@ git config --global hub.protocol https
 git config --global credential.helper store
 ```  
 
-2. Save github creds to hub(one time)  
+2. Go to any git project to trigger hub to ask credentials for the first time:
 ```
-cd your-project/
+cd any-git-project/
 hub browse -u 
 ```
 Note: hub also supports 2 factor authentication.
