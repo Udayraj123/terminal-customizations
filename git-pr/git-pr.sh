@@ -47,7 +47,12 @@ getOwnerFromRemote(){
 
 getPRHead(){
     # Get current working git branch
-    local PUSH_REV=$(git rev-parse --symbolic-full-name --abbrev-ref @{push});
+    PUSH_REV=$(git rev-parse --symbolic-full-name --abbrev-ref @{push} 2> /dev/null); local RETURN=$?;
+    if [[ ! "$RETURN" = "0" ]];then
+        echo "${_red}Error: Cannot find push head${_reset}";
+        echo "${_cyan}Hint: Possibly you're on a checked out branch. Did you forget to 'git push'?${_reset}";
+        exit 1;
+    fi
     # Assuming remote's name doesn't have a slash
     local pushRemote=$(echo $PUSH_REV | cut -d/ -f1)
     PUSH_OWNER=$(getOwnerFromRemote $pushRemote)
@@ -70,7 +75,7 @@ selectOwner(){
     local SELECT_LENGTH=$(( ${#selectLabels[@]} ));
     if [[ $SELECT_LENGTH = 1 ]];then 
         SELECTED_OWNER=${ownerOptions[0]}
-        echo "Selecting PR ref ${selectLabels[0]}"
+        echo "Selected PR ref '${selectLabels[0]}'"
     else
         title="${_cyan}Choose base to create the PR with:${_reset}"
         prompt="${_cyan}Pick an option:${_reset}"
