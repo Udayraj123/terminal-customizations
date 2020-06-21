@@ -1,9 +1,9 @@
 #!/bin/sh
 #================================================================
 #-    Author          Udayraj Deshmukh 
-#-    Version         0.0.10
+#-    Version         0.0.11
 #-    Created         25/05/2020
-#-    Last updated    30/05/2020
+#-    Last updated    22/06/2020
 #================================================================
 
 # Some colors for prompts
@@ -47,16 +47,19 @@ getOwnerFromRemote(){
 
 getPRHead(){
     # Get current working git branch
-    PUSH_REV=$(git rev-parse --symbolic-full-name --abbrev-ref @{push} 2> /dev/null); local RETURN=$?;
+    CURRENT_BRANCH=$(git branch --show-current)
+    # Note: renamed branch with ref by old name is not handled yet. (git branch --move will disturb this script)
+    # But the zsh git prompt can point out these two separately
+    PUSH_REMOTE=$(git rev-parse --symbolic-full-name --abbrev-ref @{push} 2> /dev/null); local RETURN=$?;
     if [[ ! "$RETURN" = "0" ]];then
         echo "${_red}Error: Cannot find push head${_reset}";
-        echo "${_cyan}Hint: Possibly you're on a checked out branch. Did you forget to 'git push'?${_reset}";
+        echo "${_cyan}Hint: Possibly your branch '$CURRENT_BRANCH' is newly checked out. Did you forget to 'git push'?${_reset}";
         exit 1;
     fi
     # Assuming remote's name doesn't have a slash
-    local pushRemote=$(echo $PUSH_REV | cut -d/ -f1)
+    local pushRemote=$(echo $PUSH_REMOTE | cut -d/ -f1)
     PUSH_OWNER=$(getOwnerFromRemote $pushRemote)
-    CURRENT_BRANCH=$(echo $PUSH_REV | cut -d/ -f2-)
+    # CURRENT_BRANCH=$(echo $PUSH_REMOTE | cut -d/ -f2-)
     PR_HEAD="$PUSH_OWNER:$CURRENT_BRANCH"
     if [[ ! "$pushRemote" = "origin" ]]; then
         echo "${_blue}Note: Your branch is tracked from: ${_yellow}\"$PR_HEAD\"${_reset}"
@@ -135,13 +138,12 @@ getPRTitle(){
 }
 
 confirmTitle(){
-    read -e -p "${_cyan}Change title message?${_blue}(press enter to use above): ${_reset}" REPLY
     # for Bash v4: # read -e -p "PR Title: " -i "$PR_TITLE" PR_TITLE
-    echo
-
-    if [[ ! $REPLY =~ ^[\s]*$ ]]; then
+    read -e -p "${_cyan}Change title message?${_blue}(press enter to use above): ${_reset}" REPLY
+    if [[ ! "$REPLY" =~ ^[\s]*$ ]]; then
         PR_TITLE="$TITLE_PREFIX $REPLY"
     fi
+    echo
 }
 
 getCompareUrl(){
@@ -152,6 +154,7 @@ getCompareUrl(){
 }
 
 # Main Body
+
 getPRHead
 getPRBase $1 $2
 getPRTitle
