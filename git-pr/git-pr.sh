@@ -1,10 +1,13 @@
 #!/bin/sh
 #================================================================
 #-    Author          Udayraj Deshmukh 
-#-    Version         0.0.11
+#-    Version         0.0.12
 #-    Created         25/05/2020
 #-    Last updated    22/06/2020
 #================================================================
+
+# TODO/Upcoming: 
+# > Can it remember the last owner selected per repo?
 
 # Some colors for prompts
 # Sequence of text colors : black (0), red, green, yellow, blue, magenta, cyan,white
@@ -69,13 +72,20 @@ getPRHead(){
 selectOwner(){
     local ownerOptions=()
     local selectLabels=()
-    for remote in $(git remote | sort); do 
+    # Smart feat 1 : Re-order to show current push origin first. 
+    #                Rest of the list is sorted alphabetically
+    local pushRemote=$(echo $PUSH_REMOTE | cut -f 1 -d/);
+    local remoteList=$(git remote | sort)
+    local smartList=$(echo -e "$pushRemote\n$remoteList" | awk '!seen[$0]++')
+    for remote in $smartList; do 
         local owner=$(getOwnerFromRemote $remote)
         selectLabels+=("$owner:$PR_BRANCH")
         ownerOptions+=("$owner")
     done
     
     local SELECT_LENGTH=$(( ${#selectLabels[@]} ));
+    
+    # Smart feat 2 : Pre-select if there is only one option
     if [[ $SELECT_LENGTH = 1 ]];then 
         SELECTED_OWNER=${ownerOptions[0]}
         echo "Selected PR ref '${selectLabels[0]}'"
@@ -87,9 +97,9 @@ selectOwner(){
         echo "$title${_yellow}"
         PS3="$prompt ${_yellow}"
         select opt in ${selectLabels[@]} "Quit"; do 
-            let "index=$REPLY-1"
-            SELECTED_OWNER=${ownerOptions[$index]}
-            if [ 1 -le "$REPLY" ] && [ "$REPLY" -le $SELECT_LENGTH ];then
+            if [ 1 -le "$REPLY" ] 2>/dev/null && [ "$REPLY" -le $SELECT_LENGTH ];then
+                let "index=$REPLY-1"
+                SELECTED_OWNER=${ownerOptions[$index]}
                 case "$REPLY" in
                 $SELECT_LENGTH )exitProgram ;;
                 *) break;; #echo "Picked: $SELECTED_OWNER"; break;;
