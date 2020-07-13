@@ -132,19 +132,25 @@ getPRTitle(){
         return 0
     fi
 
+    # Note:
     # cut returns full string in "no '/' case".
-    local prBranchSuffix=$(echo $PR_BRANCH | cut -f2 -d/)
     # awk returns empty string in "no '/' case".
-    local issueID=$(echo $CURRENT_BRANCH | awk -F'/' '{OFS="/";$1=""; print substr($0,2)}')
-    if [[ -n "$issueID" ]] && [[ ! "$prBranchSuffix" = "$issueID" ]];then
-        TITLE_PREFIX="[$prBranchSuffix][$issueID]"
-    else
-        TITLE_PREFIX="[$prBranchSuffix]"
-    fi
-
-    MESSAGE=$(git log --oneline -n 1 | sed 's/[^ ]* //')
-    PR_TITLE="$TITLE_PREFIX $MESSAGE"
     
+    local prBranchSuffix=$(echo $PR_BRANCH | cut -f2 -d/)
+    local issueID=$(echo $CURRENT_BRANCH | awk -F'/' '{OFS="/";$1=""; print substr($0,2)}')
+    
+    local titleElements=(
+        "$prBranchSuffix" # Remove this line if you only want issueID in the title
+        "$issueID"
+    )
+
+    # Wrap square brackets to title elements
+    TITLE_PREFIX=$(printf "[%s]" "${titleElements[@]}")
+    
+    # Get latest commit from logs
+    MESSAGE=$(git log --oneline -n 1 | sed 's/[^ ]* //')
+
+    PR_TITLE="$TITLE_PREFIX $MESSAGE"
 }
 
 confirmTitle(){
