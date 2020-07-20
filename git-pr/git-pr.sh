@@ -1,16 +1,23 @@
 #!/bin/sh
 #================================================================
 #-    Author          Udayraj Deshmukh 
-#-    Version         0.0.12
+#-    Version         0.0.13
 #-    Created         25/05/2020
-#-    Last updated    22/06/2020
+#-    Last updated    20/07/2020
 #================================================================
 
-# TODO/Upcoming: 
-# > Can it remember the last owner selected per repo?
+#================= Flags and Customizations =====================
+#-  choose what you want to extract in the titleElements variable
+PROMPT_CONFIRM_TITLE=true
+#================================================================
 
-# Some colors for prompts
-# Sequence of text colors : black (0), red, green, yellow, blue, magenta, cyan,white
+#================================================================
+##  Upcoming features: 
+#-  Passing a flag to choose what to extract
+#-  Remembering the last selected reference
+#================================================================
+
+# Some colors for prompts: black (0), red, green, yellow, blue, magenta, cyan, white
 # https://ss64.com/bash/syntax-prompt.html
 _black=$(tput setaf 0);  _red=$(tput setaf 1);  _green=$(tput setaf 2);
 _yellow=$(tput setaf 3);  _blue=$(tput setaf 4);  _magenta=$(tput setaf 5);
@@ -62,7 +69,6 @@ getPRHead(){
     # Assuming remote's name doesn't have a slash
     local pushRemote=$(echo $PUSH_REMOTE | cut -d/ -f1)
     PUSH_OWNER=$(getOwnerFromRemote $pushRemote)
-    # CURRENT_BRANCH=$(echo $PUSH_REMOTE | cut -d/ -f2-)
     PR_HEAD="$PUSH_OWNER:$CURRENT_BRANCH"
     if [[ ! "$pushRemote" = "origin" ]]; then
         echo "${_blue}Note: Your branch is tracked from: ${_yellow}\"$PR_HEAD\"${_reset}"
@@ -88,7 +94,7 @@ selectOwner(){
     # Smart feat 2 : Pre-select if there is only one option
     if [[ $SELECT_LENGTH = 1 ]];then 
         SELECTED_OWNER=${ownerOptions[0]}
-        echo "Selected PR ref '${selectLabels[0]}'"
+        echo "${_blue}Selected PR ref: ${_yellow}${selectLabels[0]}${_reset}"
     else
         title="${_cyan}Choose base to create the PR with:${_reset}"
         prompt="${_cyan}Pick an option:${_reset}"
@@ -134,13 +140,13 @@ getPRTitle(){
 
     # Note:
     # cut returns full string in "no '/' case".
-    # awk returns empty string in "no '/' case".
-    
     local prBranchSuffix=$(echo $PR_BRANCH | cut -f2 -d/)
-    local issueID=$(echo $CURRENT_BRANCH | awk -F'/' '{OFS="/";$1=""; print substr($0,2)}')
+    local issueID=$(echo $CURRENT_BRANCH | cut -f2 -d/)
+    # awk returns empty string in "no '/' case".
+    # local issueID=$(echo $CURRENT_BRANCH | awk -F'/' '{OFS="/";$1=""; print substr($0,2)}')
     
     local titleElements=(
-        "$prBranchSuffix" # Remove this line if you only want issueID in the title
+        # "$prBranchSuffix" # Uncomment this line if want base/track branch in the title
         "$issueID"
     )
 
@@ -181,7 +187,7 @@ echo -e "${_blue}* * * * Summary * * * *${_reset}"
 echo -e "${_blue}Base: \t${_yellow}$PR_BASE${_reset}"
 echo -e "${_blue}Head: \t${_yellow}$PR_HEAD${_reset}"
 echo -e "${_blue}Title: \t${_yellow}$PR_TITLE${_reset}"
-if [[ ! -n "$CUSTOM_MESSAGE" ]];then
+if [[ ! -n "$CUSTOM_MESSAGE" ]] && [[ "$PROMPT_CONFIRM_TITLE" = "true" ]];then
     confirmTitle
 fi
 echo "${_blue}$> ${_cyan}hub pull-request -o -b \"$PR_BASE\" -h  \"$PR_HEAD\" -m \"$PR_TITLE\"${_reset}"
