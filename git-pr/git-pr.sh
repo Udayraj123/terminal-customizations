@@ -156,7 +156,7 @@ getPRTitle(){
     # local issueID=$(echo $CURRENT_BRANCH | awk -F'/' '{OFS="/";$1=""; print substr($0,2)}')
     
     local titleElements=(
-        "$prBranchSuffix" # Uncomment this line if want base/track branch in the title
+        # "$prBranchSuffix" # Uncomment this line if want base/track branch in the title
         "$issueID"
         # Insert any extracted string here
     )
