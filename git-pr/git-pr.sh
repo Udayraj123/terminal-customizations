@@ -8,7 +8,8 @@
 
 #================= Flags and Customizations =====================
 #-  choose what you want to extract in the titleElements variable
-PROMPT_CONFIRM_TITLE=true
+PROMPT_CONFIRM_PR_TITLE=true
+PROMPT_CONFIRM_HUB_COMMAND=true
 #================================================================
 
 #================================================================
@@ -203,11 +204,16 @@ echo -e "${_blue}* * * * Summary * * * *${_reset}"
 echo -e "${_blue}Base: \t${_yellow}$PR_BASE${_reset}"
 echo -e "${_blue}Head: \t${_yellow}$PR_HEAD${_reset}"
 echo -e "${_blue}Title: \t${_yellow}$PR_TITLE${_reset}"
-if [[ ! -n "$CUSTOM_MESSAGE" ]] && [[ "$PROMPT_CONFIRM_TITLE" = "true" ]];then
+if [[ ! -n "$CUSTOM_MESSAGE" ]] && [[ "$PROMPT_CONFIRM_PR_TITLE" = "true" ]];then
     confirmTitle
 fi
 echo "${_blue}$> ${_cyan}hub pull-request -o -b \"$PR_BASE\" -h  \"$PR_HEAD\" -m \"$PR_TITLE\"${_reset}"
-read -e -p "${_cyan}Press enter to run: ${_reset}" REPLY
+
+if [[ "$PROMPT_CONFIRM_HUB_COMMAND" = "true" ]];then
+    read -e -p "${_cyan}Press enter to run: ${_reset}" REPLY
+else 
+    REPLY=""
+fi
 
 if [[ "$REPLY" =~ ^[\s]*$ ]]; then
     hub pull-request -o -b "$PR_BASE" -h  "$PR_HEAD" -m "$PR_TITLE"
