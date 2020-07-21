@@ -1,9 +1,9 @@
 #!/bin/sh
 #================================================================
 #-    Author          Udayraj Deshmukh 
-#-    Version         0.0.13
+#-    Version         0.1.0
 #-    Created         25/05/2020
-#-    Last updated    20/07/2020
+#-    Last updated    21/07/2020
 #================================================================
 
 #================= Flags and Customizations =====================
@@ -44,6 +44,15 @@ exitProgram(){
     echo "${_cyan}Goodbye!${_reset}"; 
     exit 1;
 }
+
+uniqueArray(){
+    local arrayArg=("$@")
+    local uniqueSep='\n' # some separator that is uncommon in array elements
+    # local outSep=' ' -v ORS="$outSep" 
+    printf "%s$uniqueSep" "${arrayArg[@]}" | awk -v RS="$uniqueSep" '!seen[$1]++'
+}
+
+# Flow steps
 getOwnerFromUrl(){
     # Possible urls:
     # https://github.com/Owner/Repo.git
@@ -146,12 +155,19 @@ getPRTitle(){
     # local issueID=$(echo $CURRENT_BRANCH | awk -F'/' '{OFS="/";$1=""; print substr($0,2)}')
     
     local titleElements=(
-        # "$prBranchSuffix" # Uncomment this line if want base/track branch in the title
+        "$prBranchSuffix" # Uncomment this line if want base/track branch in the title
         "$issueID"
+        # Insert any extracted string here
     )
+    
+    # Find unique elements in the array - avoids "[master][master]" case
+    titleElements=($(uniqueArray "${titleElements[@]}"))
 
     # Wrap square brackets to title elements
     TITLE_PREFIX=$(printf "[%s]" "${titleElements[@]}")
+
+    # Remove empty brackets
+    TITLE_PREFIX=${TITLE_PREFIX/\[\]/""};
     
     # Get latest commit from logs
     MESSAGE=$(git log --oneline -n 1 | sed 's/[^ ]* //')
