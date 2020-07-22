@@ -1,6 +1,8 @@
 # Git PR utility
 Create pull requests from command line with its title extracted from branch name and commit.
 
+> Note: Readme will soon be updated to reflect newly added flags
+
 ## Prerequisites:
 _Note: You may want to use [Code Copy](https://chrome.google.com/webstore/detail/codecopy/fkbfebkcoelajmhanocgppanfoojcdmg?hl=en) for copying below commands -_
 

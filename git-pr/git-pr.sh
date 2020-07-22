@@ -1,9 +1,9 @@
 #!/bin/sh
 #================================================================
 #-    Author          Udayraj Deshmukh 
-#-    Version         0.1.1
+#-    Version         0.1.2
 #-    Created         25/05/2020
-#-    Last updated    21/07/2020
+#-    Last updated    22/07/2020
 #================================================================
 
 #================= Flags and Customizations =====================
@@ -67,7 +67,8 @@ getOwnerFromRemote(){
 
 getPRHead(){
     # Get current working git branch
-    CURRENT_BRANCH=$(git branch --show-current)
+    # CURRENT_BRANCH=$(git branch --show-current) # Requires Git 2.22+
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) # Requires Git 1.6.3+
     # Note: renamed branch with ref by old name is not handled yet. (git branch --move will disturb this script)
     # But the zsh git prompt can point out these two separately
     PUSH_REMOTE=$(git rev-parse --symbolic-full-name --abbrev-ref @{push} 2> /dev/null); local RETURN=$?;
