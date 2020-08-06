@@ -1,15 +1,16 @@
 #!/bin/sh
 #================================================================
 #-    Author          Udayraj Deshmukh 
-#-    Version         0.1.2
+#-    Version         0.1.3
 #-    Created         25/05/2020
-#-    Last updated    22/07/2020
+#-    Last updated    06/08/2020
 #================================================================
 
 #================= Flags and Customizations =====================
 #-  choose what you want to extract in the titleElements variable
 PROMPT_CONFIRM_PR_TITLE=true
 PROMPT_CONFIRM_HUB_COMMAND=true
+SMART_REMOTE_ORDERING=true2
 #================================================================
 
 #================================================================
@@ -61,7 +62,7 @@ getOwnerFromUrl(){
     echo $1 | awk -F'github.com' '{print substr($2,2)}' | cut -d/ -f 1
 }
 getOwnerFromRemote(){
-    local url=$(git remote get-url "$1")
+    local url=$(git remote get-url "$1" 2> /dev/null)
     getOwnerFromUrl $url
 }
 
@@ -89,20 +90,27 @@ getPRHead(){
 selectOwner(){
     local ownerOptions=()
     local selectLabels=()
-    # Smart feat 1 : Re-order to show current push origin first. 
-    #                Rest of the list is sorted alphabetically
     local pushRemote=$(echo $PUSH_REMOTE | cut -f 1 -d/);
     local remoteList=$(git remote | sort)
-    local smartList=$(echo -e "$pushRemote\n$remoteList" | awk '!seen[$0]++')
+    if [[ "$SMART_REMOTE_ORDERING" = "true" ]];then
+        # Smart Feat: Re-order to show upstream first, 
+        #   then current push origin(if different), then the rest. 
+        #   Rest of the list is sorted alphabetically
+        local smartList=$(echo -e "upstream\n$pushRemote\n$remoteList" | awk '!seen[$0]++')
+    else
+        local smartList=$remoteList
+    fi
     for remote in $smartList; do 
         local owner=$(getOwnerFromRemote $remote)
-        selectLabels+=("$owner:$PR_BRANCH")
-        ownerOptions+=("$owner")
+        if [[ -n "$owner" ]];then
+            selectLabels+=("$owner:$PR_BRANCH")
+            ownerOptions+=("$owner")
+        fi
     done
     
     local SELECT_LENGTH=$(( ${#selectLabels[@]} ));
     
-    # Smart feat 2 : Pre-select if there is only one option
+    # Smart Feat: Pre-select if there is only one option
     if [[ $SELECT_LENGTH = 1 ]];then 
         SELECTED_OWNER=${ownerOptions[0]}
         echo "${_blue}Selected PR ref: ${_yellow}${selectLabels[0]}${_reset}"
