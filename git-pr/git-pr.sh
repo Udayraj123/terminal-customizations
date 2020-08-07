@@ -1,16 +1,16 @@
 #!/bin/sh
 #================================================================
 #-    Author          Udayraj Deshmukh 
-#-    Version         0.1.3
+#-    Version         0.1.4
 #-    Created         25/05/2020
-#-    Last updated    06/08/2020
+#-    Last updated    07/08/2020
 #================================================================
 
 #================= Flags and Customizations =====================
 #-  choose what you want to extract in the titleElements variable
 PROMPT_CONFIRM_PR_TITLE=true
 PROMPT_CONFIRM_HUB_COMMAND=true
-SMART_REMOTE_ORDERING=true2
+SMART_REMOTE_ORDERING=true
 #================================================================
 
 #================================================================
