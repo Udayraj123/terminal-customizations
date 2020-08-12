@@ -1,9 +1,9 @@
 #!/bin/sh
 #================================================================
 #-    Author          Udayraj Deshmukh
-#-    Version         0.1.4
+#-    Version         0.1.5
 #-    Created         25/05/2020
-#-    Last updated    08/08/2020
+#-    Last updated    09/08/2020
 #================================================================
 
 #================= Flags and Customizations =====================
@@ -74,10 +74,10 @@ getOwnerFromRemote() {
 getPRHead() {
     # Get current working git branch
     # CURRENT_BRANCH=$(git branch --show-current) # Requires Git 2.22+
-    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) # Requires Git 1.6.3+
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref=strict HEAD) # Requires Git 1.6.3+
     # Note: renamed branch with ref by old name is not handled yet. (git branch --move will disturb this script)
     # But the zsh git prompt can point out these two separately
-    PUSH_REMOTE=$(git rev-parse --symbolic-full-name --abbrev-ref @{push} 2>/dev/null)
+    PUSH_REMOTE=$(git rev-parse --symbolic-full-name --abbrev-ref=strict @{push} 2>/dev/null)
     local RETURN=$?
     if [[ ! "$RETURN" = "0" ]]; then
         echo "${_red}Error: Cannot find push head${_reset}"
@@ -195,15 +195,16 @@ getPRTitle() {
 
 confirmTitle() {
     # for Bash v4: # read -e -p "PR Title: " -i "$PR_TITLE" PR_TITLE
-    read -e -p "${_cyan}Change title message?${_blue}(press enter to use above): ${_reset}" REPLY
+    read -e -p "${_cyan}Change title message?${_blue}(press enter to use above): ${_green}" REPLY
     if [[ ! "$REPLY" =~ ^[\s]*$ ]]; then
         PR_TITLE="$TITLE_PREFIX $REPLY"
     fi
-    echo
+    echo "${_reset}"
 }
 
 getCompareUrl() {
     # TODO: Case of --track different head
+    # Note: This command has some issues from hub unexpected 'doesn't seem pushed to a remote'
     COMPARE_URL=$(hub compare -u -b "$PR_BASE")
     # Use expanded controls to allow changing title/creating draft PR
     COMPARE_URL="$COMPARE_URL?expand=1"
@@ -227,7 +228,8 @@ fi
 echo "${_blue}$> ${_cyan}hub pull-request -o -b \"$PR_BASE\" -h  \"$PR_HEAD\" -m \"$PR_TITLE\"${_reset}"
 
 if [[ "$PROMPT_CONFIRM_HUB_COMMAND" = "true" ]]; then
-    read -e -p "${_cyan}Press enter to run: ${_reset}" REPLY
+    read -e -p "${_cyan}Press enter to run: ${_green}" REPLY
+    echo "${_reset}"
 else
     REPLY=""
 fi
