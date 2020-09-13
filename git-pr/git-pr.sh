@@ -1,9 +1,9 @@
 #!/bin/sh
 #================================================================
 #-    Author          Udayraj Deshmukh
-#-    Version         0.1.5
+#-    Version         0.1.6
 #-    Created         25/05/2020
-#-    Last updated    09/08/2020
+#-    Last updated    14/09/2020
 #================================================================
 
 #================= Flags and Customizations =====================
@@ -195,7 +195,7 @@ getPRTitle() {
 
 confirmTitle() {
     # for Bash v4: # read -e -p "PR Title: " -i "$PR_TITLE" PR_TITLE
-    read -e -p "${_cyan}Change title message?${_blue}(press enter to use above): ${_green}" REPLY
+    read -e -p "${_cyan}Type title message:${_blue}(press enter to use above): ${_green}" REPLY
     if [[ ! "$REPLY" =~ ^[\s]*$ ]]; then
         PR_TITLE="$TITLE_PREFIX $REPLY"
     fi

@@ -1,0 +1,48 @@
+# This is Git's per-user configuration file.
+[user]
+name = udayrajMT
+# email = 
+
+[credential]
+	username = udayrajMT
+helper = store
+
+[push]
+default = current
+[hub]
+protocol = https
+[core]
+editor = nano
+
+# Preferences as per typing speed
+[alias]
+add-commit = "!git add -A && git commit -m "
+adog = log --all --decorate --oneline --graph
+# create if not exist -
+checkoutb = "!_f() { git checkout $1 2>/dev/null || git checkout -b $1; }; _f"
+stashl = stash list
+co = checkout
+ci = commit
+st = status
+br = branch
+hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+type = cat-file -t
+dump = cat-file -p
+pr = !bash ~/bin/git-pr.sh
+user = "!echo \"Setting username: $1\" && git config --global credential.username "
+unadd = restore --staged
+shallow = clone --depth 1
+# https://stackoverflow.com/questions/5188320/how-can-i-get-a-list-of-git-branches-ordered-by-most-recent-commit
+recent = "!git for-each-ref --color=always --sort=-committerdate refs/heads refs/remotes --format='%(HEAD)%(color:yellow)%(refname:short)|%(color:red)%(objectname:short)%(color:reset)|%(color:bold green)%(committerdate:relative)|%(color:magenta)%(authorname)%(color:reset)|%(color:blue)%(subject)'|column -ts'|'"
+alias = config --get-regexp alias
+
+# For path-based git
+[p10khelper]
+username = udayrajMT
+
+[pull]
+rebase = false
+
+# Note: includeIf shall preferrably be kept at the bottom to avoid overrides.
+[includeIf "gitdir:~/Personals/"]
+path = ~/Personals/.gitconfig

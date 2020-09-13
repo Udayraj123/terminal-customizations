@@ -192,6 +192,19 @@ alias kg='kubectl get'
 alias kgpo='kubectl get pods'
 alias kgpoojson='kubectl get pods -o=json'
 alias kgpon='kubectl get pods --namespace '
+
+# prefix a cat command to open the file
+alias codecat='code';
+alias nanocat='nano';
+
+function gitstash() {
+    git stash push -m "stash_msg_from_zsh$1"
+}
+
+function gitstashapply() {
+    git stash apply $(git stash list | grep "stash_msg_from_zsh$1" | cut -d: -f1)
+}
+
 # Note: this adds .2s to startup
 # if [ /usr/local/bin/kubectl ]; then source <(kubectl completion zsh); fi
 

@@ -1,0 +1,10 @@
+[user]
+    name = udayraj123
+    # email = 
+
+[p10khelper]
+    username = udayraj123
+
+[credential]
+    # helper = store --file ./.git-credentials
+    helper = cache --timeout 999999
