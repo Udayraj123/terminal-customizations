@@ -60,6 +60,7 @@ OWN_THEME_BLUE_5=21
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
     # os_icon               # os identifier
     dir                     # current directory
+    git_wip_warning         # warn if last commit contains /wip/gi
     vcs                     # git status
     # prompt_char           # prompt symbol
   )
@@ -70,7 +71,7 @@ OWN_THEME_BLUE_5=21
   # last prompt line gets hidden if it would overlap with left prompt.
   typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
     # status                  # exit code of the last command
-    command_execution_time  # duration of the last command
+    command_execution_time    # duration of the last command
     # background_jobs         # presence of background jobs
     # direnv                  # direnv status (https://direnv.net/)
     # asdf                    # asdf version manager (https://github.com/asdf-vm/asdf)
@@ -117,7 +118,7 @@ OWN_THEME_BLUE_5=21
     # # disk_usage            # disk usage
     # # swap                  # used swap
     # todo                    # todo items (https://github.com/todotxt/todo.txt-cli)
-    timewarrior             # timewarrior tracking status (https://timewarrior.net/)
+    # timewarrior             # timewarrior tracking status (https://timewarrior.net/)
     # taskwarrior             # taskwarrior task count (https://taskwarrior.org/)
     time                    # current time
     git_push_remote
@@ -1631,13 +1632,14 @@ OWN_THEME_BLUE_5=21
 function prompt_git_credential_helper(){
   local isGit;
   if isGit=$(git rev-parse --is-inside-work-tree 2> /dev/null); then
+      # Note: p10khelper.username is set inside .gitconfig & ~/Personals/.gitconfig
       local resolvedUsername=$(git config p10khelper.username)
       local globalUsername=$(git config --global credential.username)
 
-
       if [[ "$resolvedUsername" != "" ]] && [[ "$resolvedUsername" != "$globalUsername" ]]; then 
-        echo "Updated git username: ${_green}${resolvedUsername}${_reset}"
+        # This command reorders the entries in credentials file and brings current username to the top.
         git config --global credential.username "$resolvedUsername"
+        echo "Updated git username: ${_green}${resolvedUsername}${_reset}"
 
         # echo "Checking GTM status..."
         # gtm status | head -n 5 
@@ -1646,6 +1648,12 @@ function prompt_git_credential_helper(){
       p10k segment -b "$OWN_THEME_BLUE_2" -f black  -t "${globalUsername}"
   fi
 }
+
+  function prompt_git_wip_warning() {
+    if $(git log -n 1 2>/dev/null | grep -qwic "wip"); then
+        p10k segment -b "$OWN_THEME_RED_5" -f black  -t "✎ wip"
+    fi
+  }
 
   function prompt_git_push_remote() {
     # declare, then assign https://stackoverflow.com/questions/20157938/exit-code-of-variable-assignment-to-command-substitution-in-bash#comment51212318_20157997
