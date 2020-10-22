@@ -1651,7 +1651,7 @@ function prompt_git_credential_helper(){
 
   function prompt_git_wip_warning() {
     if $(git log -n 1 2>/dev/null | grep -qwic "wip"); then
-        p10k segment -b "$OWN_THEME_RED_5" -f black  -t "✎ wip"
+        p10k segment -b "$OWN_THEME_RED_4" -f black  -t "✎ wip"
     fi
   }
 
