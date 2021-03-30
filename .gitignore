@@ -1,0 +1,10 @@
+.log
+.DS_Store
+dist
+**/.env
+**/stats.json
+**/.eslintcache
+**/yarn-error.log
+.vscode
+/.gtm/
+**/.idea

@@ -1629,28 +1629,34 @@ OWN_THEME_BLUE_5=21
     p10k segment -b '#232a3f' -f white -t "✨${randomMsgs[$index]}✨"
   }
 
+firstRunInShell="";
 function prompt_git_credential_helper(){
   local isGit;
   if isGit=$(git rev-parse --is-inside-work-tree 2> /dev/null); then
       # Note: p10khelper.username is set inside .gitconfig & ~/Personals/.gitconfig
       local resolvedUsername=$(git config p10khelper.username)
-      local globalUsername=$(git config --global credential.username)
+      local globalGitUsername=$(git config --global credential.username)
 
-      if [[ "$resolvedUsername" != "" ]] && [[ "$resolvedUsername" != "$globalUsername" ]]; then 
+      if [[ "$resolvedUsername" != "" ]] && [[ "$resolvedUsername" != "$globalGitUsername" ]]; then 
         # This command reorders the entries in credentials file and brings current username to the top.
         git config --global credential.username "$resolvedUsername"
-        echo "Updated git username: ${_green}${resolvedUsername}${_reset}"
+        
+        # Do not output anything in zsh startup
+        if [[ "$firstRunInShell" != "" ]];then
+          echo "Updated git username: ${_green}${resolvedUsername}${_reset}"
+        fi
 
         # echo "Checking GTM status..."
         # gtm status | head -n 5 
       fi 
-      local globalUsername=$(git config --global credential.username)
-      p10k segment -b "$OWN_THEME_BLUE_2" -f black  -t "${globalUsername}"
+      local globalGitUsername=$(git config --global credential.username)
+      p10k segment -b "$OWN_THEME_BLUE_2" -f black  -t "${globalGitUsername}"
   fi
+  firstRunInShell="true";
 }
 
   function prompt_git_wip_warning() {
-    if $(git log -n 1 2>/dev/null | grep -qwic "wip"); then
+    if $(git log --oneline -n 1 2>/dev/null | grep -qwic "wip"); then
         p10k segment -b "$OWN_THEME_RED_4" -f black  -t "✎ wip"
     fi
   }

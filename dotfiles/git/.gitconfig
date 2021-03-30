@@ -13,8 +13,6 @@ default = current
 protocol = https
 [core]
 editor = nano
-
-# Preferences as per typing speed
 [alias]
 add-commit = "!git add -A && git commit -m "
 adog = log --all --decorate --oneline --graph
@@ -33,7 +31,8 @@ user = "!echo \"Setting username: $1\" && git config --global credential.usernam
 unadd = restore --staged
 shallow = clone --depth 1
 # https://stackoverflow.com/questions/5188320/how-can-i-get-a-list-of-git-branches-ordered-by-most-recent-commit
-recent = "!git for-each-ref --color=always --sort=-committerdate refs/heads refs/remotes --format='%(HEAD)%(color:yellow)%(refname:short)|%(color:red)%(objectname:short)%(color:reset)|%(color:bold green)%(committerdate:relative)|%(color:magenta)%(authorname)%(color:reset)|%(color:blue)%(subject)'|column -ts'|'"
+recent = "!git for-each-ref --color=always --sort=-committerdate refs/heads refs/remotes --format='%(HEAD)%(color:yellow)%(refname:short)|%(color:magenta)%(authorname)%(color:reset)|%(color:bold green)%(committerdate:relative)|%(color:red)%(objectname:short)%(color:reset)'|column -ts'|'"
+# recent = "!git for-each-ref --color=always --sort=-committerdate refs/heads refs/remotes --format='%(HEAD)%(color:yellow)%(refname:short)|%(color:red)%(objectname:short)%(color:reset)|%(color:bold green)%(committerdate:relative)|%(color:magenta)%(authorname)%(color:reset)|%(color:blue)%(subject)'|column -ts'|'"
 alias = config --get-regexp alias
 
 # For path-based git
