@@ -1,11 +1,11 @@
 # This is Git's per-user configuration file.
 [user]
-name = udayrajMT
-# email = 
+name = <your-git-handle-work>
+email = <your-git-email>
 
 [credential]
-	username = udayrajMT
-helper = store
+	username = <your-git-handle-work>
+	helper = store
 
 [push]
 default = current
@@ -33,15 +33,17 @@ shallow = clone --depth 1
 # https://stackoverflow.com/questions/5188320/how-can-i-get-a-list-of-git-branches-ordered-by-most-recent-commit
 recent = "!git for-each-ref --color=always --sort=-committerdate refs/heads refs/remotes --format='%(HEAD)%(color:yellow)%(refname:short)|%(color:magenta)%(authorname)%(color:reset)|%(color:bold green)%(committerdate:relative)|%(color:red)%(objectname:short)%(color:reset)'|column -ts'|'"
 # recent = "!git for-each-ref --color=always --sort=-committerdate refs/heads refs/remotes --format='%(HEAD)%(color:yellow)%(refname:short)|%(color:red)%(objectname:short)%(color:reset)|%(color:bold green)%(committerdate:relative)|%(color:magenta)%(authorname)%(color:reset)|%(color:blue)%(subject)'|column -ts'|'"
-alias = config --get-regexp alias
 
+alias = config --get-regexp alias
+setremote = "!_f() { git branch -u \"$1/$(git rev-parse --abbrev-ref HEAD)\"; }; _f"
 # For path-based git
 [p10khelper]
-username = udayrajMT
+username = <your-git-handle-work>
 
 [pull]
 rebase = false
 
+# If git directory is inside personal workspace, load personal .gitconfig below.
 # Note: includeIf shall preferrably be kept at the bottom to avoid overrides.
 [includeIf "gitdir:~/Personals/"]
 path = ~/Personals/.gitconfig

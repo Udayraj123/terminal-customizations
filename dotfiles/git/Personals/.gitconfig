@@ -1,9 +1,10 @@
+# This would be the second .gitconfig file to be put at the root of your personal workspace
 [user]
-    name = udayraj123
+    name = <your-git-handle-personal>
     # email = 
 
 [p10khelper]
-    username = udayraj123
+    username = <your-git-handle-personal>
 
 [credential]
     # helper = store --file ./.git-credentials

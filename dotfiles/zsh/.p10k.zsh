@@ -61,6 +61,7 @@ OWN_THEME_BLUE_5=21
     # os_icon               # os identifier
     dir                     # current directory
     git_wip_warning         # warn if last commit contains /wip/gi
+    git_stash_count         # show stash count
     vcs                     # git status
     # prompt_char           # prompt symbol
   )
@@ -1658,6 +1659,13 @@ function prompt_git_credential_helper(){
   function prompt_git_wip_warning() {
     if $(git log --oneline -n 1 2>/dev/null | grep -qwic "wip"); then
         p10k segment -b "$OWN_THEME_RED_4" -f black  -t "✎ wip"
+    fi
+  }
+
+  function prompt_git_stash_count() {
+    local stashCount=$(git stash list 2>/dev/null | wc -l | xargs echo);
+    if [[ "$stashCount" -gt "0" ]]; then
+        p10k segment -b "$OWN_THEME_GREEN_3" -f black  -t "✎ ${stashCount}"
     fi
   }
 
