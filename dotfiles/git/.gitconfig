@@ -3,21 +3,25 @@
 name = <your-git-handle-work>
 email = <your-git-email>
 
-[credential]
-	username = <your-git-handle-work>
-	helper = store
+# [credential]
+#	username = <your-git-handle-work>
+#	helper = store
 
+# Tip: use this command to auto setup push remote for new branch: git config --global push.autoSetupRemote true
 [push]
 default = current
+	autoSetupRemote = true
+
 [hub]
 protocol = https
 [core]
 editor = nano
+
 [alias]
 add-commit = "!git add -A && git commit -m "
 adog = log --all --decorate --oneline --graph
-# create if not exist -
-checkoutb = "!_f() { git checkout $1 2>/dev/null || git checkout -b $1; }; _f"
+# create if not exist, set push -
+checkoutb = "!_f() { git checkout $1 2>/dev/null || (git checkout -b $1 && git push -u); }; _f"
 stashl = stash list
 co = checkout
 ci = commit
@@ -36,12 +40,15 @@ recent = "!git for-each-ref --color=always --sort=-committerdate refs/heads refs
 
 alias = config --get-regexp alias
 setremote = "!_f() { git branch -u \"$1/$(git rev-parse --abbrev-ref HEAD)\"; }; _f"
-# For path-based git
-[p10khelper]
-username = <your-git-handle-work>
 
 [pull]
 rebase = false
+
+[credential]
+	username = <your-git-handle-work>
+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
 
 # If git directory is inside personal workspace, load personal .gitconfig below.
 # Note: includeIf shall preferrably be kept at the bottom to avoid overrides.
